@@ -7,19 +7,19 @@ public class Solution<MyObject> {
 	 *  Пример для n = 4:
 	 *	   #
 	 *	  ##
-	 *  ###
-	 * ####
+	 *   ###
+	 *  ####
 	 */
 
-	protected static class Wic
+	static class Wic implements Runnable
+
 	{
 		private int n;
-		public void SetN(int a){
-			n=a;
-
+		public void SetN ( int a){
+			n = a;
 		}
 
-		public void func1(){
+		public void run () {
 			int k = n;
 			String o = "";
 
@@ -35,13 +35,16 @@ public class Solution<MyObject> {
 		}
 	}
 
+
+
 	private static final Scanner scanner = new Scanner(System.in);
 
-	public static void main(String[] args) {
+	public static void main (String[]args){
 		int n = scanner.nextInt();
 		scanner.skip("(\r\n|[\n\r\u2028\u2029\u0085])?");
-		Wic MyObject= new Wic() ;
+		Wic MyObject = new Wic();
 		MyObject.SetN(n);
-		MyObject.func1();
+		Thread myTr = new Thread(MyObject);
+		myTr.start();
 	}
 }
