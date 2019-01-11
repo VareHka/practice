@@ -1,50 +1,79 @@
-import  java.util.*;
-import java.lang.*;
+package com.company;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class Solution<MyObject> {
-	/*
-	 *  Дано n - число уровней. Построить треугольник из символов #.
-	 *  Пример для n = 4:
-	 *	   #
-	 *	  ##
-	 *   ###
-	 *  ####
-	 */
+public class Solution {
+	static final Logger log = Logger.getLogger(com.company.Main.Imagereader.class.getName());
 
-	static class Wic
+	interface image{
+		void Read();
+	}   //C://Games//test_1024x768.bmp   C://Games//File.log
 
-	{
-		private int n;
-		public void SetN ( int a){
-			n = a;
-		}
+	public static void main(String[] args) {
+		com.company.Main.image image = new com.company.Main.ProxyImagereader("C://Games//File.log");
+		image.Read();
 
-		public void func1 () {
-			int k = n;
-			String o = "";
 
-			for (int i = 1; i <= n; i++) {
-				k = k - 1;
-				o = o + "#";
-				for (int j = 1; j <= k; j++) {
-					System.out.print(" ");
-				}
-				System.out.print(o);
-				System.out.println();
-			}
-		}
 	}
 
 
+	public static class Imagereader implements com.company.Main.image {
+		String file1;
 
-	private static final Scanner scanner = new Scanner(System.in);
+		public Imagereader(String file) {
+			file1 = file;
+		}
 
-	public static void main (String[]args){
-		int n = scanner.nextInt();
-		scanner.skip("(\r\n|[\n\r\u2028\u2029\u0085])?");
-		Wic MyObject = new Wic();
-		MyObject.SetN(n);
-		Thread myTr = new Thread(()-> MyObject.func1());
-		myTr.start();
+		@Override
+		public void Read() {
+
+			File File = new File(file1);
+
+			String NameFile = File.getName();
+			Pattern p = Pattern.compile(".+_(\\d+x\\d+).bmp");
+			Matcher n = p.matcher(NameFile);
+			if (n.matches() == true) {
+				System.out.print("Разрешение="+n.group(1));
+			} else {
+				Get(File);
+			}
+		}
+
+
+		protected void Get(File File) {
+			try {
+				BufferedImage bufImage;
+				//log.addHandler(new FileHandler(file1));
+				bufImage = ImageIO.read(File);
+				int w, h;
+				h = bufImage.getHeight();
+				w = bufImage.getWidth();
+				System.out.print("Разрешение=" + w + "x" + h);
+			}catch(Exception e) { log.info("Ошибка при загрузке изображения");}
+		}
+
+	}
+
+	public static class ProxyImagereader  implements com.company.Main.image {
+		String file;
+		com.company.Main.Imagereader image;
+
+		public ProxyImagereader(String s) {
+			file = s;
+		}
+
+		public void Read() {
+
+			if(image == null){
+				image = new com.company.Main.Imagereader(file);
+			}
+			image.Read();
+		}
+
 	}
 }
